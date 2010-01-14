@@ -26,10 +26,10 @@ BeRelation: class extends Relation {
 }
 
 
-CompType: cover {
-	more := 0
-	less := 1
-	equal := 2
+CompType: class {
+	more := static 0
+	less := static 1
+	equal := static 2
 }
 
 //id1 can be more/equaly/less someting than id2
