@@ -1,8 +1,9 @@
 .PHONY: all clean
-OOC_FLAGS=-v -t -shout -driver=sequence
+OOC_FLAGS=-v -t -shout -driver=sequence -sourcepath=source/
+APP=bvz
 
 all:
-	ooc main ${OOC_FLAGS}
+	ooc main -o=${APP} ${OOC_FLAGS}
 
 clean:
-	rm -rfv ooc_tmp/ main
+	rm -rfv ooc_tmp/ ${APP}
