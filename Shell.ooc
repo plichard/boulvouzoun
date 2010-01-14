@@ -1,0 +1,6 @@
+Shell: class {
+	init: func {
+	}
+
+
+}
