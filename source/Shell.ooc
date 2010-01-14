@@ -1,6 +1,0 @@
-Shell: class {
-	init: func {
-	}
-
-
-}

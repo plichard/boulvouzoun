@@ -1,5 +1,5 @@
 .PHONY: all clean
-OOC_FLAGS=-v -t -shout -driver=sequence -sourcepath=source/
+OOC_FLAGS=-v -t -shout -driver=sequence -sourcepath=source/ -noclean
 APP=bvz
 
 all:
