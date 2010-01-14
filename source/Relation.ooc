@@ -24,3 +24,21 @@ BeRelation: class extends Relation {
 		this rate(w)
 	}
 }
+
+
+CompType: cover {
+	more := 0
+	less := 1
+	equal := 2
+}
+
+//id1 can be more/equaly/less someting than id2
+CompareRelation: class extends Relation {
+	something: ID
+	type: Int
+	init: func ~be(=id1,=id2,w: Double,=something,=type) {
+		super()
+		this rate(w)
+	}
+}
+
