@@ -62,6 +62,7 @@ IdleState: class extends State {
         
         match(tokens[0]) {
             case "/logout" =>
+                println()
                 return LoginState new(shell)
             case "/quit" =>
                 "Bye!" println()
