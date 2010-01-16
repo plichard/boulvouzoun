@@ -1,45 +1,116 @@
-import text/StringTokenizer
+import text/StringTokenizer, structs/ArrayList
 import Info
+
+State: abstract class {
+    
+    shell: Shell
+    
+    init: func (=shell) {}
+    
+    run: abstract func -> This
+    
+    reset: abstract func
+    
+}
+
+LoginState: class extends State {
+    
+    askUser = 1, askPwd = 2 : static Int
+    username := ""
+    password := ""
+    
+    state := askUser
+    
+    init: func ~login (.shell) { super(shell) }
+    
+    run: func -> This {
+        
+        res : This = match(state) {
+            case askUser =>
+                "username: " print()
+                username = stdin readLine() trim('\n')
+                state = askPwd
+                this
+            case askPwd =>
+                "password: " print()
+                password = stdin readLine() trim('\n')
+                shell user = username
+                IdleState new(shell)
+        }
+        return res
+        
+    }
+    
+    reset: func {
+    
+        username = ""
+        password = ""
+        
+    }
+    
+}
+
+IdleState: class extends State {
+    
+    PS1 := "bvz > "
+    
+    init: func ~idle (.shell) { super(shell) }
+    
+    run: func -> This {
+        
+        tokens := StringTokenizer new(readLine(), " ") toArrayList()
+        
+        match(tokens[0]) {
+            case "/logout" =>
+                return LoginState new(shell)
+            case "/quit" =>
+                "\nBye!\n" println()
+                shell running = false
+            case =>
+                "\nWhat's %s?\n" format(tokens[0]) println()
+        }
+        
+        this
+        
+    }
+    
+    readLine: func -> String {
+        PS1 print()
+        stdin readLine() trim('\n')
+    }
+    
+    reset: func {}
+    
+}
+
 
 Shell: class {
     
-    PS1 := "bvz > "
     running := true
     
-	init: func {}
+    state := LoginState new(this)
+    user := ""
+    
+	init: func {
+        title := "boulvouzoun - Peter Lichard & Amos Wenger, 2010"
+        lines := "=" * title length()
+        lines println(); title println(); lines println(); println()
+    }
     
     run: func {
         
         while(running) {
-            PS1 print()
-            line := stdin readLine() trim('\n')
-            tokLine := StringTokenizer new(line," ")
-            while(tokLine hasNext()) {
-				analyze( tokLine nextToken() )
-			}
-            println()
+            newState := state run()
+            if(newState != state) {
+                state reset()
+            }
+            state = newState
         }
         
     }
-    
-    quit: func {
-		"Exiting..." print()
-		running = false
-	}
-	
-	
-	analyze: func (word: String) {
-		match(word) {
-			case "quit" => {
-				quit()
-			}
-			case => {
-				printf("What is: '%s' ?\n",word)
-			}
-		}
-		
-	}
 
 }
+
+
 
 
