@@ -1,5 +1,6 @@
 import text/StringTokenizer, structs/ArrayList
 import Info
+import World
 
 State: abstract class {
     
@@ -51,8 +52,10 @@ LoginState: class extends State {
 }
 
 IdleState: class extends State {
-    
+
+	world := World new()  
     PS1 := "\nbvz > "
+
     
     init: func ~idle (.shell) { super(shell) }
     
@@ -67,6 +70,15 @@ IdleState: class extends State {
             case "/quit" =>
                 "Bye!" println()
                 shell running = false
+            case "/save" => {
+				if(tokens size() == 2){
+					world save(tokens[1])
+					printf("Saving world to %s...\n",tokens[1])
+				} else {
+					printf("usage: /save [filename]\n")
+				}
+			}
+				
             case =>
                 "What's %s?" format(tokens[0]) println()
         }
@@ -88,6 +100,7 @@ IdleState: class extends State {
 Shell: class {
     
     running := true
+ 
     
     state := LoginState new(this)
     user := ""
