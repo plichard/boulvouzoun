@@ -52,8 +52,10 @@ LoginState: class extends State {
 }
 
 IdleState: class extends State {
-	world := World new()
-    PS1 := "bvz > "
+
+	world := World new()  
+    PS1 := "\nbvz > "
+
     
     init: func ~idle (.shell) { super(shell) }
     
@@ -65,7 +67,7 @@ IdleState: class extends State {
             case "/logout" =>
                 return LoginState new(shell)
             case "/quit" =>
-                "\nBye!\n" println()
+                "Bye!" println()
                 shell running = false
             case "/save" => {
 				if(tokens size() == 2){
@@ -77,7 +79,7 @@ IdleState: class extends State {
 			}
 				
             case =>
-                "\nWhat's %s?\n" format(tokens[0]) println()
+                "What's %s?" format(tokens[0]) println()
         }
         
         this
@@ -103,7 +105,7 @@ Shell: class {
     user := ""
     
 	init: func {
-        title := "boulvouzoun - Peter Lichard & Amos Wenger, 2010"
+        title := " boulvouzoun - Peter Lichard & Amos Wenger, 2010 "
         lines := "=" * title length()
         lines println(); title println(); lines println(); println()
     }
