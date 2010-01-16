@@ -41,7 +41,7 @@ World: class {
 	
 	//file format: nInfo nRelation {infos(nhuman names, {names})} {relations(nhuman names, {names})}
 	save: func(filename: String) -> Bool {
-		target := FileWriter new(filename,"w")
+		target := FileWriter new(filename)
 		if(!target)
 			return false
 		target write(infos size toString() + " ")
