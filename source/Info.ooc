@@ -3,9 +3,9 @@ include stdint
 import structs/[LinkedList, ArrayList, List, HashMap]
 import Relation
 
-ID: cover from UInt64 {
+ID: cover from Int {
     
-    toString: func -> String { this as UInt64 toString() }
+    toString: func -> String { this as Int toString() }
     
     getInfo: func -> Info { Info get(this) }
     
@@ -20,15 +20,15 @@ Info: abstract class {
     
 	id: ID
     
-	lastId: static ID = 0 // an ID of 0 is invalid
+	lastID: static ID = 1 // an ID of 0 is invalid
     map := static HashMap<This> new()
 	
 	init: func {
 		relations = LinkedList<Relation> new()
 		humanNames = ArrayList<String> new()
-        
-		lastId += 1
-		id = lastId
+            
+		id = lastID
+        lastID += 1
         
         map put(id toString(), this)
 	}

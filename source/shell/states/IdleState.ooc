@@ -45,20 +45,30 @@ IdleState: class extends State {
             if(token == "what") {
                 info := getInfo(lastPart(tokens, i + 1))
                 match(tokens[i + 1]) {
+                    case "about" =>
+                        for(relation in info getRelations()) {
+                            "I know that %s" format(relation toString()) println()
+                        }
                     case "is" =>
-                        for(r in info getRelations()) {
-                            if(r instanceOf(BeRelation)) {
-                                "I know that %s is %s" format(info toString(), r getID2() getInfo() toString()) println()
+                        for(id: ID in 1..Info lastID) {
+                            candidate := id getInfo()
+                            if(candidate == null) continue
+                            if(candidate instanceOf(BeRelation)) {
+                                rel := candidate as BeRelation
+                                if(rel getID2() == info getID()) {
+                                    " - %s" format(rel toString()) println()
+                                }
                             }
                         }
                     case =>
-                        "  I don't know what %s means!" format(tokens[1]) println()
+                        "  I don't know what '%s' means!" format(tokens[1]) println()
                 }
                 return
             }
             
             if(token == "is") {
-                relation = BeRelation new(getID(firstPart(tokens, i)), getID(lastPart(tokens, i)), 0.5)
+                relation := BeRelation new(getID(firstPart(tokens, i)), getID(lastPart(tokens, i)), 0.5)
+                " Got new relation %s (ID=%d)" format(relation toString(), relation getID()) println()
                 return
             }
             
@@ -94,7 +104,9 @@ IdleState: class extends State {
     }
     
     getID: func (s: String) -> ID {
-        getInfo(s) getID()
+        info := getInfo(s)
+        "  (was looking for info %s, got ID %d)" format(s, info getID()) println()
+        return info getID()
     }
     
     readLine: func -> String {
