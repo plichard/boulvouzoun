@@ -19,10 +19,17 @@ Info: abstract class {
 		lastId += 1
 		id = lastId
 	}
+    
+    init: func ~humanName (humanName: String) {
+        init()
+        humanNames add(humanName)
+    }
 	
 	rate: func(d: Double) {
 		trust += d
 	}
+    
+    getID: func -> ID { id }
 	
 }
 

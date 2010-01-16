@@ -3,6 +3,7 @@ import structs/[HashMap,LinkedList]
 import io/FileWriter
 
 World: class {
+    
 	infos := LinkedList<Info> new()
 	relations := LinkedList<Info> new()
 	
