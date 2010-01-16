@@ -3,20 +3,24 @@ import Info
 // the relation goes from info1 to info2
 Relation: abstract class extends Info {
     
-	id1,id2: ID
+	id1, id2: ID
     
-	init: func ~relation(){
+	init: func ~relation(=id1, =id2, w: Double) {
 		super()
+        rate(w)
+        id1 getInfo() addRelation(this)
 	}
+    
+    getID1: func -> ID { id1 }
+    getID2: func -> ID { id2 }
     
 }
 
 // for example: info1 has info2
 HasRelation: class extends Relation {
     
-	init: func ~has(=id1, =id2, w: Double) {
-		super()
-		this rate(w)
+	init: func ~has(.id1, .id2, w: Double) {
+		super(id1, id2, w)
 	}
     
 }
@@ -24,9 +28,8 @@ HasRelation: class extends Relation {
 
 BeRelation: class extends Relation {
     
-	init: func ~be(=id1, =id2, w: Double) {
-		super()
-		this rate(w)
+	init: func ~has(.id1, .id2, w: Double) {
+		super(id1, id2, w)
 	}
     
 }
@@ -45,9 +48,8 @@ CompareRelation: class extends Relation {
 	something: ID
 	type: Int
     
-	init: func ~be(=id1, =id2, w: Double, =something, =type) {
-		super()
-		this rate(w)
+	init: func ~be(.id1, .id2, w: Double, =something, =type) {
+		super(id1, id2, w)
 	}
     
 }

@@ -41,9 +41,27 @@ IdleState: class extends State {
         
         i := 0
         for(token in tokens) {
+            
+            if(token == "what") {
+                info := getInfo(lastPart(tokens, i + 1))
+                match(tokens[i + 1]) {
+                    case "is" =>
+                        for(r in info getRelations()) {
+                            if(r instanceOf(BeRelation)) {
+                                "I know that %s is %s" format(info toString(), r getID2() getInfo() toString()) println()
+                            }
+                        }
+                    case =>
+                        "  I don't know what %s means!" format(tokens[1]) println()
+                }
+                return
+            }
+            
             if(token == "is") {
                 relation = BeRelation new(getID(firstPart(tokens, i)), getID(lastPart(tokens, i)), 0.5)
+                return
             }
+            
             i += 1
         }
         
@@ -65,14 +83,18 @@ IdleState: class extends State {
         sb toString()
     }
     
-    getID: func (s: String) -> ID {
+    getInfo: func (s: String) -> Info {
         info := shell getWorld() searchInfo(s)
         if(info == null) {
             info = Info new(s)
             shell getWorld() addInfo(info)
             "  Hey, '%s' is new to me! (ID=%d)" format(s, info getID()) println()
         }
-        info getID()
+        info
+    }
+    
+    getID: func (s: String) -> ID {
+        getInfo(s) getID()
     }
     
     readLine: func -> String {

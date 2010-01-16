@@ -17,7 +17,7 @@ World: class {
 	addRelation: func(relation: Relation) {
 		relations add(relation)
 	}
-	
+    
 	searchInfo: func(name: String) -> Info {
 		for(info in infos) {
 			for(hname in info humanNames) {
