@@ -1,4 +1,4 @@
-use readline
+use readline, math
 import readline
 
 import text/[StringTokenizer, StringBuffer], structs/[ArrayList, List]
@@ -14,14 +14,18 @@ IdleState: class extends State {
     
     run: func -> This {
         
-        tokens := StringTokenizer new(readLine(), " ") toArrayList()
+        line := readLine()
+        if(line isEmpty()) return this
+        tokens := StringTokenizer new(line, " ") toArrayList()
         
         match(tokens[0]) {
             case "/logout" =>
                 println()
                 return LoginState new(shell)
+                
             case "/quit" =>
                 shell quit()
+                
             case "/save" => {
 				if(tokens size() == 2){
 					shell getWorld() save(tokens[1])
@@ -45,6 +49,22 @@ IdleState: class extends State {
         
         i := 0
         for(token in tokens) {
+            
+            if(token == "of") {
+                i2 := 0
+                for(j in 0..tokens size()) {
+                    if(tokens[j] == "is") {
+                        i2 = j
+                        break
+                    }
+                }                        
+                attribute := getInfo(firstPart(tokens, i))
+                subject := getInfo(part(tokens, i + 1, i2))
+                value := getInfo(lastPart(tokens, i2))
+                "  %s->%s = %s" format(subject toString(), attribute toString(), value toString()) println()
+                AttributeRelation new(subject getID(), value getID(), attribute getID(), 0.5)
+                return
+            }
             
             if(token == "what") {
                 match(tokens[i + 1]) {
@@ -72,12 +92,21 @@ IdleState: class extends State {
             if(token == "is") {
                 relation : Relation = null
                 nextToken := tokens[i + 1]
+                last := Info lastID
                 if(nextToken == "a") {
                     relation = IsOfTypeRelation new(getID(firstPart(tokens, i)), getID(lastPart(tokens, i + 1)), 0.5)
                 } else {
                     relation = BeRelation new(getID(firstPart(tokens, i)), getID(lastPart(tokens, i)), 0.5)
                 }
-                "  Got new relation %s (ID=%d)" format(relation toString(), relation getID()) println()
+                //"  Got new relation %s (ID=%d)" format(relation toString(), relation getID()) println()
+                
+                printRelatedInfos(relation)
+                
+                if(relation getID1() >= last) {
+                    "  Tell me more about '%s'" format(relation getID1() getInfo() toString()) println()
+                } else if(relation getID2() >= last) {
+                    "  Tell me more about '%s'" format(relation getID2() getInfo() toString()) println()
+                }
                 return
             }
             
@@ -103,7 +132,7 @@ IdleState: class extends State {
                         continue
                     }
                     
-                    " - %s is a match!" format(candidate toString()) println()
+                    " - %s" format(candidate toString()) println()
                 }
                 return
             }
@@ -112,6 +141,26 @@ IdleState: class extends State {
         }
         
         "  Come again?" println()
+        
+    }
+    
+    printRelatedInfos: func (reference: Relation) {
+        
+        too : Relation = null
+        for(i: ID in 1..Info lastID) {
+            candidate := i getInfo()
+            if(candidate == reference) continue
+            if(candidate instanceOf(reference class)) {
+                relation := candidate as Relation
+                if(relation getID2() == reference getID2()) {
+                    if(!too || (rand() % 2 == 0)) too = relation
+                }
+            }
+        }
+        
+        if(too) {
+            "  Oh, %s too!" format(too toString()) println()
+        }
         
     }
     
@@ -186,7 +235,7 @@ IdleState: class extends State {
         if(info == null) {
             info = Info new(s)
             shell getWorld() addInfo(info)
-            "  Hey, '%s' is new to me! (ID=%d)" format(s, info getID()) println()
+            //"  Hey, '%s' is new to me! (ID=%d)" format(s, info getID()) println()
         }
         info
     }

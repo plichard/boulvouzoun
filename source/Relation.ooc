@@ -17,6 +17,22 @@ Relation: abstract class extends Info {
     
 }
 
+AttributeRelation: class extends Relation {
+    
+    attributeID: ID
+    
+	init: func ~be (.id1, .id2, =attributeID, w: Double) {
+		super(id1, id2, w)
+	}
+    
+    getAttributeID: func -> ID { attributeID }
+    
+    toString: func -> String {
+        id1 getInfo() toString() + "'s " + attributeID getInfo() toString() +  " is " +id2 getInfo() toString()
+    }
+    
+}
+
 // for example: info1 has info2
 HasRelation: class extends Relation {
     
