@@ -6,10 +6,10 @@ Relation: abstract class extends Info {
 	id1, id2: ID
     
 	init: func ~relation(=id1, =id2, w: Double) {
-        "New Relation between %d and %d with weight %.2f" format(id1, id2, w) println()
 		super()
         rate(w)
         id1 getInfo() addRelation(this)
+        id2 getInfo() addRelation(this)
 	}
     
     getID1: func -> ID { id1 }
@@ -30,16 +30,26 @@ HasRelation: class extends Relation {
     
 }
 
-
 BeRelation: class extends Relation {
     
 	init: func ~be (.id1, .id2, w: Double) {
-        "New BeRelation between %d and %d with weight %.2f" format(id1, id2, w) println()
 		super(id1, id2, w)
 	}
     
     toString: func -> String {
         id1 getInfo() toString() + " is " +id2 getInfo() toString()
+    }
+    
+}
+
+IsOfTypeRelation: class extends Relation {
+    
+	init: func ~isKind (.id1, .id2, w: Double) {
+		super(id1, id2, w)
+	}
+    
+    toString: func -> String {
+        id1 getInfo() toString() + " is a " +id2 getInfo() toString()
     }
     
 }

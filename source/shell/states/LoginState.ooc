@@ -17,7 +17,6 @@ LoginState: class extends State {
             case askUser =>
                 "username: " print()
                 username = stdin readLine() trim('\n')
-                state = askPwd
                 IdleState new(shell)
                 
             // password not implemented yet
