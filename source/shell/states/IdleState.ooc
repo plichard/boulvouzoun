@@ -47,22 +47,22 @@ IdleState: class extends State {
         for(token in tokens) {
             
             if(token == "what") {
-                info := getInfo(lastPart(tokens, i + 1))
                 match(tokens[i + 1]) {
                     case "about" =>
+                        info := getInfo(lastPart(tokens, i + 1))
                         for(relation in info getRelations()) {
                             "I know that %s" format(relation toString()) println()
                         }
-                    case "is" =>
-                        for(id: ID in 1..Info lastID) {
-                            candidate := id getInfo()
-                            if(candidate != null && candidate instanceOf(BeRelation)) {
-                                rel := candidate as BeRelation
-                                if(rel getID2() == info getID()) {
-                                    " - %s" format(rel toString()) println()
-                                }
-                            }
+                    case "is" => {
+                        token2 := tokens[i+2]
+                        if(token2 == "a") {
+                            info := getInfo(lastPart(tokens, i + 2))
+                            printAllRelations(info, IsOfTypeRelation)
+                        } else {
+                            info := getInfo(lastPart(tokens, i + 1))
+                            printAllRelations(info, BeRelation)
                         }
+                    }
                     case =>
                         "  I don't know what '%s' means!" format(tokens[1]) println()
                 }
@@ -77,7 +77,7 @@ IdleState: class extends State {
                 } else {
                     relation = BeRelation new(getID(firstPart(tokens, i)), getID(lastPart(tokens, i)), 0.5)
                 }
-                " Got new relation %s (ID=%d)" format(relation toString(), relation getID()) println()
+                "  Got new relation %s (ID=%d)" format(relation toString(), relation getID()) println()
                 return
             }
             
@@ -112,6 +112,38 @@ IdleState: class extends State {
         }
         
         "  Come again?" println()
+        
+    }
+    
+    printAllRelations: func (rightOperand: Info, relationType: Class) {
+        
+        for(i: ID in 1..Info lastID) {
+            candidate := i getInfo()
+            if(candidate == null) {
+                break
+            }
+            //"Reviewing candidate %s" format(candidate toString()) println()
+            if(candidate instanceOf(relationType) && candidate as Relation getID2() == rightOperand getID()) {
+                " - %s" format(candidate toString()) println()
+            }
+            if(relationType != IsOfTypeRelation && candidate instanceOf(IsOfTypeRelation)) {
+                rel := candidate as Relation
+                printRelations(rel getID1() getInfo(), rel getID2() getInfo(), rightOperand, relationType)
+            }
+        }
+        
+    }
+    
+    printRelations: func (origin, current, rightOperand : Info, relationType: Class) {
+        
+        //"Should print all relations of type %s in %s where rightOperand is %s\n" format(relationType name, current toString(), rightOperand toString()) println()
+        for(rel in current getRelations()) {
+            if(rel instanceOf(relationType) && rel getID2() == rightOperand getID()) {
+                " - %s (because it's a %s)" format(origin toString(), current toString()) println()
+            } else if(rel instanceOf(IsOfTypeRelation) && rel getID1() == current getID()) {
+                printRelations(origin, rel getID2() getInfo(), rightOperand, relationType)
+            }
+        }
         
     }
     
