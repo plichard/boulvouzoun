@@ -1,3 +1,6 @@
+use readline
+import readline
+
 import text/[StringTokenizer, StringBuffer], structs/[ArrayList, List]
 import State, LoginState
 import ../../[Relation, Info]
@@ -5,6 +8,7 @@ import ../../[Relation, Info]
 IdleState: class extends State {
 
     PS1 := "\nbvz > "
+    buffer : String = null
     
     init: func ~idle (.shell) { super(shell) }
     
@@ -89,15 +93,7 @@ IdleState: class extends State {
                         elem = elem trim()
                         criterion := getInfo(elem)
                         
-                        holds := false
-                        for(relation in candidate relations) {
-                            if(relation getID1() == candidate getID() && relation getID2() == criterion getID()) {
-                                //"Well, %s!" format(relation toString()) println()
-                                holds = true
-                            }
-                        }
-                        
-                        if(!holds) {
+                        if(!holds(criterion, candidate)) {
                             allHolds = false
                             break
                         }
@@ -109,12 +105,31 @@ IdleState: class extends State {
                     
                     " - %s is a match!" format(candidate toString()) println()
                 }
+                return
             }
             
             i += 1
         }
         
-        "  Fiddle-dee dum!"
+        "  Come again?" println()
+        
+    }
+    
+    holds: func (criterion, candidate: Info) -> Bool {
+        
+        for(relation in candidate relations) {
+            if(relation getID1() == candidate getID() && relation getID2() == criterion getID()) {
+                return true
+            }
+        }
+        
+        for(relation in candidate relations) {
+            if(relation getID1() == candidate getID() && relation instanceOf(IsOfTypeRelation)) {
+                if(holds(criterion, relation getID2() getInfo())) return true
+            }
+        }
+        
+        return false
         
     }
     
@@ -150,8 +165,10 @@ IdleState: class extends State {
     }
     
     readLine: func -> String {
-        PS1 print()
-        stdin readLine() trim('\n')
+        if(buffer) free(buffer)
+        buffer = readline(PS1)
+        if(!buffer isEmpty()) add_history(buffer)
+        buffer
     }
     
     reset: func {}

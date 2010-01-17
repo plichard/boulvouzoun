@@ -1,3 +1,6 @@
+use readline
+import readline
+
 import State, IdleState
 
 LoginState: class extends State {
@@ -15,8 +18,9 @@ LoginState: class extends State {
         res : This = match(state) {
             
             case askUser =>
-                "username: " print()
-                username = stdin readLine() trim('\n')
+                buffer := readline("username: ")
+                username = buffer clone()
+                free(buffer)
                 IdleState new(shell)
                 
             // password not implemented yet
